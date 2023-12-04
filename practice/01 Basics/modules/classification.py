@@ -71,7 +71,22 @@ class TimeSeriesKNN:
 
         dist = 0
 
-        # INSERT YOUR CODE
+        if self.metric=='euclidean':
+            if self.metric_params['normalize']:
+                func = norm_ED_distance
+            else:
+                func = ED_distance
+            # ts1, ts2
+            dist = func(x_train, x_test)
+        elif self.metric=='dtw':
+            if self.metric_params['normalize']:
+                x_train = z_normalize(x_train)
+                x_test = z_normalize(x_test)
+            func = DTW_distance
+            # ts1, ts2, r
+            dist = func(x_train, x_test, *list(self.metric_params.values())[1:])
+        else:
+            raise ValueError("Incorrect metric")
 
         return dist
 
@@ -92,8 +107,13 @@ class TimeSeriesKNN:
         """
 
         neighbors = []
+
+        # Append all neighbors
+        for i, x_train in enumerate(self.X_train):
+            neighbors.append((self._distance(x_train, x_test), self.Y_train[i]))
         
-        # INSERT YOUR CODE
+        # Sort neighbors by k (slice)
+        neighbors = sorted(neighbors, key=lambda x: x[0])[:self.n_neighbors]
 
         return neighbors
 
@@ -115,7 +135,10 @@ class TimeSeriesKNN:
 
         y_pred = []
 
-        # INSERT YOUR CODE
+        for x_test in X_test:
+            neighbors = self._find_neighbors(x_test)
+            unique_labels, counts = np.unique(np.array(neighbors)[:, 1], return_counts=True)
+            y_pred.append(int(unique_labels[np.argmax(counts)]))
 
         return y_pred
 

@@ -29,6 +29,7 @@ class TimeSeriesHierarchicalClustering:
         self.n_clusters = n_clusters
         self.method = method
         self.model = None
+        self.linkage_matrix = None
 
 
     def _create_linkage_matrix(self):
@@ -53,9 +54,9 @@ class TimeSeriesHierarchicalClustering:
                     current_count += counts[child_idx - n_samples]
             counts[i] = current_count
 
-        linkage_matrix = np.column_stack([self.model.children_, self.model.distances_, counts]).astype(float)
+        self.linkage_matrix = np.column_stack([self.model.children_, self.model.distances_, counts]).astype(float)
 
-        return linkage_matrix
+        return self.linkage_matrix
 
 
     def fit(self, distance_matrix):
@@ -74,7 +75,7 @@ class TimeSeriesHierarchicalClustering:
         """
 
          # INSERT YOUR CODE
-          
+        self.model = AgglomerativeClustering(compute_distances=True).fit(distance_matrix)
         return self
 
 
@@ -142,6 +143,8 @@ class TimeSeriesHierarchicalClustering:
         title : str, default = 'Dendrogram'
             Title of dendrogram.
         """
+
+        self._create_linkage_matrix()
 
         max_cluster = len(self.linkage_matrix) + 1
 
