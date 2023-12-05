@@ -117,11 +117,11 @@ def snippets(ts, snippet_size, num_snippets=2, window_size=None):
 def plot_snippets(ts, snippets):
     with plt.rc_context(
         {
-            "text.usetex": True,
-            "text.latex.preamble": r"\usepackage[russian]{babel}",
+            # "text.usetex": True,
+            # "text.latex.preamble": r"\usepackage[russian]{babel}",
             "lines.linewidth": 2,
-            "font.family": "serif",
-            "font.serif": "Computer Modern",
+            # "font.family": "serif",
+            # "font.serif": "Computer Modern",
             "font.size": 36,
         }
     ):
